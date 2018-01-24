@@ -1,7 +1,9 @@
 package app.servImpl;
 
 import app.dom.Employee;
+import app.repo.EmployeeRepository;
 import app.serv.EmployeeService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -11,6 +13,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
+
+    @Autowired
+    private EmployeeRepository employeeRepository;
 
      private List<Employee> employees  = new ArrayList<>(
 Arrays.asList(
@@ -22,7 +27,10 @@ Arrays.asList(
 
     @Override
     public void deleteEmployee(Long id) {
-        employees.removeIf(employee -> employee.getId().equals(id));
+
+//        employees.removeIf(employee -> employee.getId().equals(id));
+
+        employeeRepository.delete(id);
     }
 
     @Override
@@ -34,27 +42,41 @@ Arrays.asList(
 //                return;
 //            }
 //        }
-        employees = employees.stream()
-                 .map(e -> e.getId().equals(id) ? employee : e)
-                 .collect(Collectors.toList());
 
+//        employees = employees.stream()
+//                 .map(e -> e.getId().equals(id) ? employee : e)
+//                 .collect(Collectors.toList());
+
+        employeeRepository.save(employee);
     }
 
     @Override
     public List<Employee> getAllEmlpoyyes(){
+
+//        return employees;
+
+        List<Employee> employees = new ArrayList<>();
+        employeeRepository
+                .findAll()
+                .forEach(employees::add);
         return employees;
     }
 
     @Override
     public void addEmployee(Employee employee) {
-        employees.add(employee);
+//        employees.add(employee);
+
+        employeeRepository.save(employee);
     }
 
     @Override
     public Employee getEmployee(Long id) {
-       return employees.stream()
-                .filter(employee -> employee.getId().equals(id))
-                .findFirst()
-                .get();
+
+//       return employees.stream()
+//                .filter(employee -> employee.getId().equals(id))
+//                .findFirst()
+//                .get();
+
+       return employeeRepository.findOne(id);
     }
 }
